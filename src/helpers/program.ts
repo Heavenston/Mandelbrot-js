@@ -1,6 +1,6 @@
-import WebGLHelper from "~/helpers/webglHelper";
-import Shader from "~/helpers/shader";
-import * as WebGLTypes from "~/utils/webGLTypes";
+import WebGLHelper from "./webglHelper";
+import Shader from "./shader";
+import * as WebGLTypes from "../utils/webGLTypes";
 
 interface Attrib {
   location: number;

@@ -1,4 +1,4 @@
-import WebGLHelper from "~/helpers/webglHelper";
+import WebGLHelper from "./webglHelper";
 
 export const enum ShaderType {
   fragment,

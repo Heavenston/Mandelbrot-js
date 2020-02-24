@@ -29,9 +29,7 @@ const program = new Program(gl);
 
 const fragmentShader = new Shader(gl, ShaderType.fragment,
   fragmentSource
-    .replace(/__THRESHOLD__/g, "32.")
-    .replace(/__RAMP__/g, "1000.")
-    .replace(/__ITERATIONS__/g, "1000.")
+    .replace(/__ITERATIONS__/g, "300.")
 );
 const vertexShader = new Shader(gl, ShaderType.vertex, vertexSource);
 program.attach(fragmentShader);

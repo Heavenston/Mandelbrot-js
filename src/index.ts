@@ -8,10 +8,10 @@ const gl = canvas.getContext("webgl2");
 if (!gl) throw "No Context";
 
 const vertices = new Float32Array([
-  -1, 1, 0, 0, 1,
-   1, 1, 1, 0, 0,
-   1,-1, 0, 1, 0,
-  -1,-1, 1, 0, 1,
+  -1, 1,
+   1, 1,
+   1,-1,
+  -1,-1,
 ]);
 const vertexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -27,14 +27,18 @@ gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
 const program = new Program(gl);
 
-const fragmentShader = new Shader(gl, ShaderType.fragment, fragmentSource);
+const fragmentShader = new Shader(gl, ShaderType.fragment,
+  fragmentSource
+    .replace(/__THRESHOLD__/g, "32.")
+    .replace(/__RAMP__/g, "1000.")
+    .replace(/__ITERATIONS__/g, "1000.")
+);
 const vertexShader = new Shader(gl, ShaderType.vertex, vertexSource);
 program.attach(fragmentShader);
 program.attach(vertexShader);
 program.link();
 
-program.setAttribPointer("a_position", 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*5, 0);
-program.setAttribPointer("a_color", 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*5, Float32Array.BYTES_PER_ELEMENT*2);
+program.setAttribPointer("a_position", 2, gl.FLOAT);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 program.use();
@@ -51,11 +55,24 @@ window.onresize = () => {
   gl.uniform1f(gl.getUniformLocation(program.program, "u_ratio"), canvas.width/canvas.height);
 }
 
+let zoom = 0;
+
+program.setUniform("u_zoom", zoom);
+program.setUniform("u_zoom", zoom);
+
+program.setUniform("u_threshold", 32);
+program.setUniform("u_ramp", 1000);
+program.setUniform("u_position", [0.432905, 0.201506]);
+
 const frame = (time: number) => {
+  program.setUniform("u_threshold", 32*zoom);
+  program.setUniform("u_ramp", Math.max(zoom, 10)*10);
+
+  program.setUniform("u_zoom", zoom);
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
-  setTimeout(() => {
-    requestAnimationFrame(frame);
-  }, 250);
+  zoom = (((time-2000)/10000)*32);
+  //zoom = (((5000-2000)/10000)*32)%32;
+  requestAnimationFrame(frame);
 };
 requestAnimationFrame(frame);

@@ -43,33 +43,20 @@ program.use();
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 gl.viewport(0,0, canvas.width, canvas.height);
+program.setUniform("u_ratio", canvas.width/canvas.height);
 
 window.onresize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   gl.viewport(0,0, canvas.width, canvas.height);
+  program.setUniform("u_ratio", canvas.width/canvas.height);
 }
 
 const frame = (time: number) => {
-  const its = (time/250).toString();
-  fragmentShader.source = fragmentSource
-    .replace(/__TRESHOLD__/g, "200.")
-    .replace(/__ITERATIONS__/g, "200.");
-  fragmentShader.compile();
-  program.link();
-
-  program.setUniform("u_ratio", canvas.width/canvas.height);
-  program.setUniform("u_zoom", 0);
-  program.setUniform("u_position", [0, 0]);
-  program.setAttribPointer("a_position", 2, gl.FLOAT, false, 0, 0);
-  
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
   setTimeout(() => {
-    //requestAnimationFrame(frame);
+    requestAnimationFrame(frame);
   }, 250);
 };
 requestAnimationFrame(frame);

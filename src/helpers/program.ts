@@ -76,7 +76,9 @@ export default class Program extends WebGLHelper {
     this.use();
     const {gl} = this;
     const {location} = this.getAttrib(name) || {};
-    if (!location) return;
+    if (location === undefined) return;
+
+    console.log({location, size, type, normalized, stride, offset});
 
     gl.enableVertexAttribArray(location);
     gl.vertexAttribPointer(location, size, type, normalized, stride, offset);
@@ -135,7 +137,6 @@ export default class Program extends WebGLHelper {
         }
       }
     }
-
     else {
       if (WebGLTypes.isFloat(info.type)) {
         switch (info.size) {

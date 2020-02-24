@@ -17,7 +17,6 @@ const vertexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-
 const indices = new Uint16Array([
   0, 1, 3,
   1, 3, 2
@@ -25,7 +24,6 @@ const indices = new Uint16Array([
 const indexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
 
 const program = new Program(gl);
 
@@ -62,12 +60,16 @@ const frame = (time: number) => {
 
   program.setUniform("u_ratio", canvas.width/canvas.height);
   program.setUniform("u_zoom", 0);
-  program.setUniform("u_position", 0, 0);
+  program.setUniform("u_position", [0, 0]);
+  program.setAttribPointer("a_position", 2, gl.FLOAT, false, 0, 0);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
   setTimeout(() => {
-    requestAnimationFrame(frame);
+    //requestAnimationFrame(frame);
   }, 250);
 };
 requestAnimationFrame(frame);

@@ -11,6 +11,6 @@ void main() {
   v_position = a_position;
   v_position.x *= u_ratio;
 
-  v_position *= pow(0.75, u_zoom);
-  v_position += u_position;
+  /*v_position *= pow(0.75, u_zoom);
+  v_position += u_position;*/
 }

@@ -65,14 +65,13 @@ program.setUniform("u_ramp", 1000);
 program.setUniform("u_position", [0.432905, 0.201506]);
 
 const frame = (time: number) => {
-  program.setUniform("u_threshold", 32*zoom);
-  program.setUniform("u_ramp", Math.max(zoom, 10)*10);
+  program.setUniform("u_threshold", Math.max(32, 32*zoom));
+  program.setUniform("u_ramp", Math.max(32, zoom*10));
 
   program.setUniform("u_zoom", zoom);
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
-  zoom = (((time-2000)/10000)*32);
-  //zoom = (((5000-2000)/10000)*32)%32;
+  zoom = (((time-2000)/10000)*32)%40;
   requestAnimationFrame(frame);
 };
 requestAnimationFrame(frame);

@@ -8,5 +8,9 @@
     },
 
     "strict": true
-  }
+  },
+  "include": [
+    "src/**/*.*",
+    "node_modules/webgl-strict-types/index.d.ts"
+  ]
 }

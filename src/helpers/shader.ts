@@ -41,13 +41,10 @@ export default class Shader extends WebGLHelper {
       console.warn("You can't clear a shader source");
       return;
     }
-    if (this.compiled) {
-      console.warn("Shader already compiled");
-      return;
-    }
 
     this.gl.shaderSource(this.shader, source);
     this._source = source;
+    this._compiled = false;
   }
 
   compile() {

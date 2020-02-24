@@ -1,3 +1,5 @@
+import Program from "~/helpers/program";
+import Shader, { ShaderType } from "~/helpers/shader";
 import fragmentSource from "./shaders/fragment.glsl";
 import vertexSource from "./shaders/vertex.glsl";
 
@@ -25,67 +27,47 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
 
-const program = gl.createProgram();
-if (!program) throw "Error";
-{
-  const vs = gl.createShader(gl.VERTEX_SHADER);
-  if (!vs) throw "Error";
-  gl.shaderSource(vs, vertexSource);
-  gl.compileShader(vs);
-  gl.attachShader(program, vs);
-  const success = gl.getShaderParameter(vs, gl.COMPILE_STATUS);
-  if (!success) {
-    // Something went wrong during compilation; get the error
-    throw "could not compile shader:" + gl.getShaderInfoLog(vs);
-  }
-}
-{
-  const fs = gl.createShader(gl.FRAGMENT_SHADER);
-  if (!fs) throw "Error";
-  gl.shaderSource(fs, fragmentSource);
-  gl.compileShader(fs);
-  gl.attachShader(program, fs);
-  const success = gl.getShaderParameter(fs, gl.COMPILE_STATUS);
-  if (!success) {
-    // Something went wrong during compilation; get the error
-    throw "could not compile shader:" + gl.getShaderInfoLog(fs);
-  }
-}
-gl.linkProgram(program);
-{
-  const success = gl.getProgramParameter(program, gl.LINK_STATUS);
-  if (!success) {
-    // something went wrong with the link
-    throw ("program failed to link:" + gl.getProgramInfoLog (program));
-  }
-}
+const program = new Program(gl);
 
-{
-  const positionLocation = gl.getAttribLocation(program, "a_position");
-  gl.enableVertexAttribArray(positionLocation);
-  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-}
-const ratioLocation = gl.getUniformLocation(program, "u_ratio");
-const timeLocation = gl.getUniformLocation(program, "u_time");
+const fragmentShader = new Shader(gl, ShaderType.fragment);
+fragmentShader.source = fragmentSource.replace(/__TRESHOLD__/g, "32.").replace(/__ITERATIONS__/g, "100.");
+fragmentShader.compile();
+const vertexShader = new Shader(gl, ShaderType.vertex, vertexSource);
+program.attach(fragmentShader);
+program.attach(vertexShader);
+program.link();
 
+program.setAttribPointer("a_position", 2, gl.FLOAT, false, 0, 0);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-gl.useProgram(program);
+
+program.use();
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 gl.viewport(0,0, canvas.width, canvas.height);
-gl.uniform1f(ratioLocation, canvas.width/canvas.height);
 
 window.onresize = () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   gl.viewport(0,0, canvas.width, canvas.height);
-  gl.uniform1f(ratioLocation, canvas.width/canvas.height);
 }
 
 const frame = (time: number) => {
-  gl.uniform1f(timeLocation, time);
+  const its = (time/250).toString();
+  fragmentShader.source = fragmentSource
+    .replace(/__TRESHOLD__/g, "200.")
+    .replace(/__ITERATIONS__/g, "200.");
+  fragmentShader.compile();
+  program.link();
+
+  program.setUniform("u_ratio", canvas.width/canvas.height);
+  program.setUniform("u_zoom", 0);
+  program.setUniform("u_position", 0, 0);
+
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-  requestAnimationFrame(frame);
+
+  setTimeout(() => {
+    requestAnimationFrame(frame);
+  }, 250);
 };
 requestAnimationFrame(frame);

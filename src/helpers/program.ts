@@ -11,9 +11,6 @@ interface Uniform {
 }
 
 export default class Program extends WebGLHelper {
-  private _linked = false;
-  get linked() {return this._linked}
-
   program: WebGLProgram;
 
   private uniformsCache: Map<string, Uniform> = new Map();
@@ -28,10 +25,6 @@ export default class Program extends WebGLHelper {
   }
 
   attach(shader: Shader) {
-    if (this.linked) {
-      console.warn("You can't attach a shader to a linked program");
-      return;
-    }
     this.gl.attachShader(this.program, shader.shader);
   }
 
@@ -41,6 +34,9 @@ export default class Program extends WebGLHelper {
     const success = gl.getProgramParameter(program, gl.LINK_STATUS);
     if (!success)
       throw (`program failed to link: ${gl.getProgramInfoLog(program)}`);
+    
+    this.attribsCache.clear();
+    this.uniformsCache.clear();
   }
   use() {
     const {gl, program} = this;

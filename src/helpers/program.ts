@@ -6,8 +6,8 @@ interface Attrib {
   info: WebGLActiveInfo;
 }
 interface Uniform {
-  index: WebGLUniformLocation;
-  info: WebGLActiveInfo;
+  index: WebGLUniformLocation|null;
+  info: WebGLActiveInfo|null;
 }
 
 export default class Program extends WebGLHelper {
@@ -75,9 +75,9 @@ export default class Program extends WebGLHelper {
     if (this.uniformsCache.has(name)) return <Uniform>this.uniformsCache.get(name);
 
     const index = gl.getUniformLocation(program, name);
-    if (index === null) throw `Could not find attribute ${name}`;
+    if (index === null) console.warn(`Could not find attribute ${name}`);
     const info = gl.getActiveUniform(program, <any>index);
-    if (info === null) throw `Could not find attribute ${name} infos`;
+    if (info === null) console.warn(`Could not find attribute ${name} infos`);
     
     const uniform: Uniform = {info, index}
     this.uniformsCache.set(name, uniform);
@@ -87,6 +87,8 @@ export default class Program extends WebGLHelper {
     this.use();
     const {gl, program} = this;
     const {index, info} = this.getUniform(name);
+
+    if (!index || !info) return;
 
     const values = [v1];
     if (v2) values.push(v2);

@@ -1,6 +1,6 @@
 import WebGLHelper from "~/helpers/webglHelper";
 
-const enum ShaderType {
+export const enum ShaderType {
   fragment,
   vertex
 }

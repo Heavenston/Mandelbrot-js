@@ -17,6 +17,7 @@
     "build": "parcel build src/index.html"
   },
   "dependencies": {
+    "glsl-hsl2rgb": "^1.1.0",
     "mathjs": "^6.6.0"
   }
 }

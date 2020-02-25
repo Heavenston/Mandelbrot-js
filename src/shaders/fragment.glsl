@@ -1,4 +1,5 @@
 precision highp float;
+#pragma glslify: hsl2rgb = require(glsl-hsl2rgb)
 
 varying mediump vec2 v_position;
 
@@ -10,7 +11,7 @@ vec3 endColor = vec3(0., 0.5, 1.);
 
 vec3 color(float its) {
   float t = its/u_ramp;
-  return startColor * (1. - t) + endColor * t;
+  return hsl2rgb(t, 1., 0.5);
 }
 
 void main() {

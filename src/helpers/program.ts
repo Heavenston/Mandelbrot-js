@@ -1,4 +1,4 @@
-import WebGLHelper from "./webglHelper";
+import WebGLHelper from "./webGLHelper";
 import Shader from "./shader";
 import * as WebGLTypes from "../utils/webGLTypes";
 

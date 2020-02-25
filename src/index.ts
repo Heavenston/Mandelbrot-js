@@ -53,7 +53,7 @@ window.onresize = () => {
   gl.uniform1f(gl.getUniformLocation(program.program, "u_ratio"), canvas.width/canvas.height);
 }
 
-let zoom = 10;
+let zoom = 0;
 
 program.setUniform("u_zoom", zoom);
 program.setUniform("u_zoom", zoom);
@@ -62,24 +62,14 @@ program.setUniform("u_threshold", 32);
 program.setUniform("u_ramp", 1000);
 program.setUniform("u_position", [0.432905, 0.201506]);
 
-const draw = () => {
-  const its = Math.max(zoom*3, 100);
-  fragmentShader.source = fragmentSource.replace(/__ITERATIONS__/g, (its+0.1).toString());
+const frame = (time: number) => {
   program.setUniform("u_threshold", 32);
-  program.setUniform("u_ramp", zoom*3);
+  program.setUniform("u_ramp", 500);
 
   program.setUniform("u_zoom", zoom);
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-}
-draw();
 
-window.addEventListener("keyup", (e: KeyboardEvent) => {
-  if (e.code === "NumpadAdd") {
-    zoom++;
-    draw();
-  }
-  if (e.code === "NumpadSubtract") {
-    zoom--;
-    draw();
-  }
-});
+  zoom = (((time-2000)/10000)*32)%40;
+  requestAnimationFrame(frame);
+};
+requestAnimationFrame(frame);
